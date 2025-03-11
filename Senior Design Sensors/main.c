@@ -11,9 +11,9 @@
 #include <stdint.h>
 #include <string.h>
 #include "sps30-i2c-3.1.1\sps30-i2c-3.1.1\sps30.h"
+#define F_CPU 16000000UL
 #include <util/delay.h>
 
-#define F_CPU 16000000UL
 #define BAUD 9600                                   // define baud
 #define BAUDRATE ((F_CPU)/(BAUD*16UL)-1)            // set baud rate for UBRR
 #define HM10_response_buffer_SIZE 64
@@ -86,7 +86,7 @@ int main(void)
 		sprintf(pressure_sensor_reading, "\r\n\r\n");
 		HM10_transmit(pressure_sensor_reading);
 
-		_delay_ms(5000); // 5 seconds
+		_delay_ms(1000); // 5 seconds
 
         sensirion_sleep_usec(SPS30_MEASUREMENT_DURATION_USEC); /* wait 1s */
         SPS30_command_response_code = sps30_read_measurement(&m);
@@ -138,7 +138,7 @@ int main(void)
 			sprintf(SPS30_measurements, "%.2f typical particle size\n", m.typical_particle_size);
 			HM10_transmit(SPS30_measurements);  
 
-			sensirion_sleep_usec(5000000);
+			sensirion_sleep_usec(5000000); // here specifically, sensirion_sleep_usec is the only delay that works for some reason
         }
 	}
 
@@ -287,7 +287,8 @@ void sps30_init()
 	uint8_t fw_major;
     uint8_t fw_minor;
 	int16_t SPS30_command_response_code;
-
+	
+	printf("Starting sps30 probe...\n");
 	while (sps30_probe() != 0) {
         printf("SPS sensor probing failed\n");
         sensirion_sleep_usec(1000000); /* wait 1s */
@@ -321,7 +322,7 @@ void ADC_init(){	//initialize ADC
 }
 
 uint16_t ADC_Read() {
-	uint16_t ADC_conversion;	//16 bit integer to hold ADC conversion result
+	uint16_t ADC_conversion = 0;	//16 bit integer to hold ADC conversion result
 	ADCSRA |= (1<<ADSC);  // Start conversion
 	while (ADCSRA & (1<<ADSC));  // Wait for conversion to complete
 	ADC_conversion |= ADCL;	//extracting conversion from lower register

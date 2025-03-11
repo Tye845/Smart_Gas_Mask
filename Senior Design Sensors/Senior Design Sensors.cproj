@@ -165,10 +165,20 @@
     <Compile Include="sps30_hw_i2c_implementation.c">
       <SubType>compile</SubType>
     </Compile>
+        <Compile Include="scd41_driver\scd4x_i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="scd41_driver\scd4x_i2c.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="scd41_driver\sensirion_config.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="sps30-i2c-3.1.1\" />
     <Folder Include="sps30-i2c-3.1.1\sps30-i2c-3.1.1\" />
+    <Folder Include="scd41_driver" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sps30-i2c-3.1.1\sps30-i2c-3.1.1\CHANGELOG.md">
@@ -184,6 +194,9 @@
       <SubType>compile</SubType>
     </None>
     <None Include="sps30-i2c-3.1.1\sps30-i2c-3.1.1\user_config.inc">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="scd41_driver\LICENSE">
       <SubType>compile</SubType>
     </None>
   </ItemGroup>

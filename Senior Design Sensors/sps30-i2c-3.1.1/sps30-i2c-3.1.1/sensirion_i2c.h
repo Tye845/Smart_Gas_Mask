@@ -105,6 +105,21 @@ int8_t sensirion_i2c_write(uint8_t address, const uint8_t* data,
  */
 void sensirion_sleep_usec(uint32_t useconds);
 
+//from scd41
+int8_t sensirion_i2c_hal_write(uint8_t address, const uint8_t* data, uint16_t count);
+
+int16_t sensirion_i2c_write_data(uint8_t address, const uint8_t* data, uint16_t data_length);
+
+int16_t sensirion_i2c_read_data_inplace(uint8_t address, uint8_t* buffer, uint16_t expected_data_length);
+
+uint16_t sensirion_i2c_add_uint16_t_to_buffer(uint8_t* buffer, uint16_t offset, uint16_t data);
+
+int8_t sensirion_i2c_hal_read(uint8_t address, uint8_t* data, uint8_t count);
+
+int8_t sensirion_i2c_check_crc(const uint8_t* data, uint16_t count, uint8_t checksum);
+
+uint8_t sensirion_i2c_generate_crc(const uint8_t* data, uint16_t count);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
