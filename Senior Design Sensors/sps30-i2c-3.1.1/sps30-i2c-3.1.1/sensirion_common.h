@@ -229,8 +229,6 @@ void sensirion_common_to_integer(const uint8_t* source, uint8_t* destination,
 INT_TYPE int_type, uint8_t data_length);
 
 //from scd41 sensirion_i2c.c
-uint16_t sensirion_i2c_add_command16_to_buffer(uint8_t* buffer, uint16_t offset, uint16_t command);
-
 uint16_t sensirion_common_bytes_to_uint16_t(const uint8_t* bytes);
 
 uint32_t sensirion_common_bytes_to_uint32_t(const uint8_t* bytes);

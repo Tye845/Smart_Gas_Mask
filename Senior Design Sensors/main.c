@@ -10,13 +10,19 @@
 #include <stdio.h>  
 #include <stdint.h>
 #include <string.h>
+#include <inttypes.h>  // PRIx64
 #include "sps30-i2c-3.1.1\sps30-i2c-3.1.1\sps30.h"
+#include "scd41_driver\scd4x_i2c.h"
 #define F_CPU 16000000UL
 #include <util/delay.h>
 
 #define BAUD 9600                                   // define baud
 #define BAUDRATE ((F_CPU)/(BAUD*16UL)-1)            // set baud rate for UBRR
 #define HM10_response_buffer_SIZE 64
+
+// #ifndef PRIx64
+// 	#error "PRIx64 is not defined! Check your compiler settings."
+// #endif
 
 void uart0_init (void);
 void uart0_transmit (unsigned char data);
@@ -31,6 +37,7 @@ void sps30_init();
 void ADC_init(void);
 uint16_t ADC_Read();
 float convert_ADC_to_pressure(uint16_t adc_value);
+void convert_and_print_serial(uint16_t* serial_raw);
 
 FILE uart0_output = FDEV_SETUP_STREAM(uart0_putchar, NULL, _FDEV_SETUP_WRITE);
 
@@ -49,8 +56,19 @@ int main(void)
 	sps30_init(); // Initialize SPS30
 	ADC_init();
 	HM10_init(); 
+	int16_t error = NO_ERROR;
+    //sensirion_i2c_hal_init(); doesn't exist
+	scd4x_init(SCD41_I2C_ADDR_62);
+
+	uint16_t serial_number[3] = {0};
+	_delay_ms(30); 
 
 	printf("Initialization Complete!\n\n");
+
+	error = scd4x_wake_up();
+    if (error != NO_ERROR) {
+        printf("error executing wake_up(): %i\n", error);
+    }
 
     int16_t SPS30_command_response_code = sps30_start_measurement();
     if (SPS30_command_response_code < 0)
@@ -315,7 +333,7 @@ void sps30_init()
 
 //fucntions for ADC functionality
 void ADC_init(){	//initialize ADC
-	ADCSRA |= (1 << ADEN);	//enables ADC and interrupt enable
+	ADCSRA |= (1 << ADEN);	//enables ADC 
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);	//prescales ADC (factor of 128)
 	ADMUX = (1<<REFS0);  // AVCC (5V) as reference, ADC0 selected
 	DDRC &= ~(1 << PINC0);	//setting input as PORTC pin 3
@@ -343,6 +361,15 @@ float convert_ADC_to_pressure(uint16_t adc_value) {
 		printf("Extreme Positive Pressure");
 	}
 	return pressure_reading;
+}
+
+// scd41
+void convert_and_print_serial(uint16_t* serial_raw) {
+	uint64_t serial_as_int = 0;
+	sensirion_common_to_integer((uint8_t*)serial_raw, (uint8_t*)&serial_as_int,
+	LONG_INTEGER, 6);
+	//printf("0x%" PRIx64 "\n", serial_as_int);
+	printf("0x%llx\n", serial_as_int);
 }
 
 // ISR to handle USART1 rx from HM10

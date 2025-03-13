@@ -311,6 +311,13 @@ uint16_t sensirion_i2c_add_uint16_t_to_buffer(uint8_t* buffer, uint16_t offset, 
 	return offset;
 }
 
+uint16_t sensirion_i2c_add_command16_to_buffer(uint8_t* buffer, uint16_t offset, uint16_t command)
+{
+	buffer[offset++] = (uint8_t)((command & 0xFF00) >> 8);
+    buffer[offset++] = (uint8_t)((command & 0x00FF) >> 0);
+    return offset;
+}
+
 int8_t sensirion_i2c_check_crc(const uint8_t* data, uint16_t count, uint8_t checksum) {
 	if (sensirion_i2c_generate_crc(data, count) != checksum)
 		return CRC_ERROR;
