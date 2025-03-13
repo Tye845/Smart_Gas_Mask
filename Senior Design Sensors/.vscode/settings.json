@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "sensirion_common.h": "c",
-        "sensirion_config.h": "c",
-        "sensirion_i2c_hal.h": "c",
-        "sensirion_i2c.h": "c"
-    }
-}
